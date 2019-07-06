@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class ArticuloServices {
 
@@ -16,7 +18,33 @@ public class ArticuloServices {
     }
 
     @Transactional
-    public void crear(Articulo articulo){
+    public void crear(Articulo articulo) {
         articuloRepository.save(articulo);
+    }
+
+    public List<Articulo> getAll() {
+        return articuloRepository.findAll();
+    }
+
+    public Articulo buscarPorNombre(String nombre) {
+        return articuloRepository.findByNombre(nombre);
+    }
+
+    public Articulo buscarPorDescripcion(String descripcion) {
+        return articuloRepository.findByDescripcion(descripcion);
+    }
+
+    public void actualizarStockCompra(Articulo articulo, int nuevoStock) {
+
+        articulo.setStock(articulo.getStock() + nuevoStock);
+        crear(articulo);
+
+    }
+
+    public void actualizarStockVenta(Articulo articulo, int nuevoStock) {
+
+        articulo.setStock(articulo.getStock() - nuevoStock);
+        crear(articulo);
+
     }
 }

@@ -19,4 +19,8 @@ public class SuplidorServices {
     public void crear(Suplidor suplidor){
         suplidorRepository.save(suplidor);
     }
+
+    public Suplidor buscarPorNombre(String nombre){
+        return suplidorRepository.findByNombre(nombre);
+    }
 }

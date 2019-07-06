@@ -1,5 +1,6 @@
 package com.emergente.mongo.entidades;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,26 +10,25 @@ import java.util.Set;
 public class Suplidor {
 
     @Id
-    private String id;
+    private ObjectId id;
 
     private String nombre;
 
-
-    private Set<Articulo> articulos;
+    private Set<SuplidorDetalle> suplidorDetalles;
 
     public Suplidor() {
     }
 
-    public Suplidor(String nombre, Set<Articulo> articulos) {
+    public Suplidor(String nombre, Set<SuplidorDetalle> suplidorDetalles) {
         this.nombre = nombre;
-        this.articulos = articulos;
+        this.suplidorDetalles = suplidorDetalles;
     }
 
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 
@@ -40,11 +40,11 @@ public class Suplidor {
         this.nombre = nombre;
     }
 
-    public Set<Articulo> getArticulos() {
-        return articulos;
+    public Set<SuplidorDetalle> getSuplidorDetalles() {
+        return suplidorDetalles;
     }
 
-    public void setArticulos(Set<Articulo> articulos) {
-        this.articulos = articulos;
+    public void setSuplidorDetalles(Set<SuplidorDetalle> suplidorDetalles) {
+        this.suplidorDetalles = suplidorDetalles;
     }
 }
