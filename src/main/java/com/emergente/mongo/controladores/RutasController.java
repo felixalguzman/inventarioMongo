@@ -1,32 +1,34 @@
 package com.emergente.mongo.controladores;
 
-import com.emergente.mongo.entidades.Articulo;
-import com.emergente.mongo.entidades.CompraWrapper;
-import com.emergente.mongo.entidades.DetalleCompra;
-import com.emergente.mongo.entidades.Suplidor;
+import com.emergente.mongo.entidades.*;
 import com.emergente.mongo.servicios.ArticuloServices;
+import com.emergente.mongo.servicios.CompraServices;
 import com.emergente.mongo.servicios.SuplidorServices;
+import com.emergente.mongo.servicios.VentaServices;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 
 @Controller
 public class RutasController {
 
     private final ArticuloServices articuloServices;
     private final SuplidorServices suplidorServices;
+    private final CompraServices compraServices;
+    private final VentaServices ventaServices;
 
-    public RutasController(ArticuloServices articuloServices, SuplidorServices suplidorServices) {
+    public RutasController(ArticuloServices articuloServices, SuplidorServices suplidorServices, CompraServices compraServices, VentaServices ventaServices) {
         this.articuloServices = articuloServices;
         this.suplidorServices = suplidorServices;
+        this.compraServices = compraServices;
+        this.ventaServices = ventaServices;
     }
 
     @GetMapping("/")
@@ -78,21 +80,45 @@ public class RutasController {
     }
 
     @GetMapping("/venta")
-    public String venta() {
+    public String venta(Model model) {
+        model.addAttribute("articulos", articuloServices.getAll());
         return "venta";
+    }
+
+    @PostMapping(value = "/vender/{nombreCliente}", consumes = "application/json")
+    public ResponseEntity vender(@RequestBody List<VentaWrapper> ventas, @PathVariable(value = "nombreCliente") String nombre) {
+
+        Set<DetalleVenta> detalleVentas = new HashSet<>();
+        System.out.println("Cliente: " + nombre);
+        for (VentaWrapper v : ventas) {
+            Articulo articulo = articuloServices.buscarPorId(v.getArticulo());
+            DetalleVenta detalleVenta = new DetalleVenta(articulo, v.getCantidad());
+            detalleVentas.add(detalleVenta);
+            articuloServices.actualizarStockVenta(articulo, v.getCantidad());
+
+            System.out.println("art: " + v.getArticulo() + " cant: " + v.getCantidad());
+        }
+        Venta venta = new Venta(nombre, detalleVentas, LocalDate.now());
+        ventaServices.crear(venta);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/comprar", method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity comprar(@RequestBody List<CompraWrapper> list) {
 
-        List<DetalleCompra> detalleCompras = new ArrayList<>();
+        Set<DetalleCompra> detalleCompras = new HashSet<>();
         for (CompraWrapper wrapper : list) {
             System.out.println("compras" + wrapper);
             Articulo articulo = articuloServices.buscarPorId(wrapper.getArticulo());
-            DetalleCompra detalleCompra = new DetalleCompra(articulo, wrapper.getCantidad(), articulo.getPrecio());
+            DetalleCompra detalleCompra = new DetalleCompra(articulo, wrapper.getCantidad(), articulo.getPrecio() * wrapper.getCantidad());
             detalleCompras.add(detalleCompra);
+            articuloServices.actualizarStockCompra(articulo, wrapper.getCantidad());
 
         }
+        ObjectId id = new ObjectId(list.get(0).getSuplidor());
+        Compra compra = new Compra(detalleCompras, LocalDate.now(), suplidorServices.buscarPorId(id));
+        compraServices.crear(compra);
 
         return new ResponseEntity(HttpStatus.OK);
     }

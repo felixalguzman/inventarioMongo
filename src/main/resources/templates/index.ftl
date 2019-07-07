@@ -44,6 +44,10 @@
             <li class="nav-item ">
                 <a class="nav-link" href="/compra">Compra</a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/venta">Venta</a>
+            </li>
         </ul>
     </div>
 </nav>
