@@ -1,6 +1,5 @@
 package com.emergente.mongo.entidades;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -8,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Articulo {
 
     @Id
-    private ObjectId _id;
+    private String _id;
 
     private String nombre;
     private String descripcion;
@@ -25,11 +24,11 @@ public class Articulo {
         this.precio = precio;
     }
 
-    public ObjectId get_id() {
+    public String get_id() {
         return _id;
     }
 
-    public void set_id(ObjectId _id) {
+    public void set_id(String _id) {
         this._id = _id;
     }
 

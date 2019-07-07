@@ -31,40 +31,40 @@ public class MongoApplication {
 //
 //
 //
-//        SuplidorDetalle suplidorDetalle = new SuplidorDetalle(5, 6, articuloServices.buscarPorNombre("Cosa 1"));
-//        SuplidorDetalle suplidorDetalle1 = new SuplidorDetalle(7, 4, articuloServices.buscarPorNombre("Cosa 2"));
+        SuplidorDetalle suplidorDetalle = new SuplidorDetalle(5, 6, articuloServices.buscarPorNombre("Cosa 1"));
+        SuplidorDetalle suplidorDetalle1 = new SuplidorDetalle(7, 4, articuloServices.buscarPorNombre("Cosa 2"));
 //
-//        Set<SuplidorDetalle> detalles = new HashSet<>();
+        Set<SuplidorDetalle> detalles = new HashSet<>();
 //        detalles.add(suplidorDetalle);
 //        detalles.add(suplidorDetalle1);
 //
 //
 //        Suplidor suplidor = new Suplidor("Alonso", detalles);
-//        SuplidorServices suplidorServices = (SuplidorServices) context.getBean("suplidorServices");
+        SuplidorServices suplidorServices = (SuplidorServices) context.getBean("suplidorServices");
 //        suplidorServices.crear(suplidor);
 
-//        Suplidor suplidor = suplidorServices.buscarPorNombre("Alonso");
-//        Set<DetalleCompra> detalleCompras = new HashSet<>();
-//        for (SuplidorDetalle detalle : suplidor.getSuplidorDetalles()) {
+        Suplidor suplidor = suplidorServices.buscarPorNombre("Alonso");
+        Set<DetalleCompra> detalleCompras = new HashSet<>();
+        for (SuplidorDetalle detalle : suplidor.getSuplidorDetalles()) {
 
-//            DetalleCompra detalleCompra = new DetalleCompra(detalle.getArticulo(), 5, 190);
-//            detalleCompras.add(detalleCompra);
+            DetalleCompra detalleCompra = new DetalleCompra(detalle.getArticulo(), 5, 190);
+            detalleCompras.add(detalleCompra);
 
 //            articuloServices.actualizarStockCompra(detalle.getArticulo(), 5);
-//        }
+        }
 
 
 //        Compra compra = new Compra(detalleCompras, LocalDate.now(), suplidor);
 //        CompraServices compraServices = (CompraServices)context.getBean("compraServices");
 //        compraServices.crear(compra);
-
-        DetalleVenta detalleVenta = new DetalleVenta(articuloServices.buscarPorNombre("Cosa 1"), 3);
-        DetalleVenta detalleVenta2 = new DetalleVenta(articuloServices.buscarPorNombre("Cosa 2"), 4);
-
-
+//
+//        DetalleVenta detalleVenta = new DetalleVenta(articuloServices.buscarPorNombre("Cosa 1"), 3);
+//        DetalleVenta detalleVenta2 = new DetalleVenta(articuloServices.buscarPorNombre("Cosa 2"), 4);
+//
+//
         Set<DetalleVenta> ventas = new HashSet<>();
-        ventas.add(detalleVenta);
-        ventas.add(detalleVenta2);
+//        ventas.add(detalleVenta);
+//        ventas.add(detalleVenta2);
 
         for (DetalleVenta venta : ventas) {
 //            articuloServices.actualizarStockVenta(venta.getArticulo(), venta.getCantidad());

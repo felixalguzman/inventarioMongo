@@ -2,7 +2,6 @@ package com.emergente.mongo.servicios;
 
 import com.emergente.mongo.entidades.Articulo;
 import com.emergente.mongo.repositorios.ArticuloRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,5 +45,9 @@ public class ArticuloServices {
         articulo.setStock(articulo.getStock() - nuevoStock);
         crear(articulo);
 
+    }
+
+    public Articulo buscarPorId(String id) {
+        return articuloRepository.findById(id).orElse(null);
     }
 }
