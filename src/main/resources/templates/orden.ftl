@@ -42,11 +42,11 @@
                 <a class="nav-link" href="/compra">Compra</a>
             </li>
 
-            <li class="nav-item active">
+            <li class="nav-item ">
                 <a class="nav-link" href="/venta">Venta</a>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link" href="/generarOrden">Generar Orden</a>
             </li>
         </ul>
@@ -56,7 +56,7 @@
 <main role="main" class="container">
 
     <div class="starter-template">
-        <h1>Nueva venta</h1>
+        <h1>Nueva orden</h1>
 
         <form>
 
@@ -64,10 +64,7 @@
 
 
                 <div class="row">
-                    <div class="col">
-                        <label for="cliente">Cliente</label>
-                        <input type="text" class="form-control" id="cliente" name="cliente" placeholder="Nombre cliente">
-                    </div>
+
                     <div class="col">
 
                         <label for="articulos">Articulos</label>
@@ -84,6 +81,11 @@
                     <div class="col">
                         <label for="cantidad">Cantidad</label>
                         <input type="number" class="form-control" min="1" id="cantidad" name="cantidad">
+                    </div>
+
+                    <div class="col">
+                        <label for="fecha">Fecha esperada</label>
+                        <input type="date" class="form-control" id="fecha" name="fecha" placeholder="Fecha esperada entrega">
                     </div>
 
                     <div class="col-auto align-self-end">
@@ -104,6 +106,7 @@
                         <th scope="col">Descripción</th>
                         <th scope="col">Precio</th>
                         <th scope="col">Cantidad</th>
+                        <th scope="col">Fecha esperada</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -112,7 +115,7 @@
                 </table>
             </div>
 
-            <button type="button" id="vender" class="btn btn-info">Vender</button>
+            <button type="button" id="vender" class="btn btn-info">Generar orden</button>
         </form>
     </div>
 
@@ -164,15 +167,18 @@
 
         var articulo = $('#articulos option:selected').val();
         var cantidad = $('#cantidad').val();
+        var fecha = $('#fecha').val();
 
-        console.log("articulo: ", articulo, "cantidad", cantidad);
+
 
         if (cantidad.length === 0 || cantidad === '') {
             alert('La cantidad no puede estar vacia');
             return false;
-        } else {
+        }
 
-
+        if (fecha.length === 0 || fecha === ''){
+            alert('La fecha no puede estar vacia');
+            return false;
         }
         var articuloNombre, articuloDescripcion, articuloPrecio;
 
@@ -190,9 +196,9 @@
             }
         });
 
-        articulos.push({articulo: articulo, cantidad: cantidad});
+        articulos.push({articulo: articulo, cantidad: cantidad, fecha: fecha});
 
-        $('#table').find('tbody').append('<tr><td>' + articuloNombre + ' </td> <td>' + articuloDescripcion + '</td>  <td>' + articuloPrecio + '</td> <td>' + cantidad + '</td></tr>');
+        $('#table').find('tbody').append('<tr><td>' + articuloNombre + ' </td> <td>' + articuloDescripcion + '</td>  <td>' + articuloPrecio + '</td> <td>' + cantidad + '</td><td>' + fecha + '</td></tr>');
 
 
     }
@@ -211,11 +217,11 @@
                 console.log('arti', response);
 
                 $("#cantidad").attr({
-                    "max": response.stock,        // substitute your own
+                    // "max": response.stock,        // substitute your own
                     "min": 1  // values (or variables) here
-                });
+                }).val(1);
 
-                $("#cantidad").val(1);
+
             }
         });
 

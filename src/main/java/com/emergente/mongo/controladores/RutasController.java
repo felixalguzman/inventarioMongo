@@ -7,6 +7,9 @@ import com.emergente.mongo.servicios.SuplidorServices;
 import com.emergente.mongo.servicios.VentaServices;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -85,6 +88,12 @@ public class RutasController {
         return "venta";
     }
 
+    @GetMapping("/generarOrden")
+    public String orden(Model model) {
+        model.addAttribute("articulos", articuloServices.getAll());
+        return "orden";
+    }
+
     @PostMapping(value = "/vender/{nombreCliente}", consumes = "application/json")
     public ResponseEntity vender(@RequestBody List<VentaWrapper> ventas, @PathVariable(value = "nombreCliente") String nombre) {
 
@@ -119,6 +128,18 @@ public class RutasController {
         ObjectId id = new ObjectId(list.get(0).getSuplidor());
         Compra compra = new Compra(detalleCompras, LocalDate.now(), suplidorServices.buscarPorId(id));
         compraServices.crear(compra);
+
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/generarOrdenCompra", method = RequestMethod.POST, consumes = "application/json")
+    public ResponseEntity generarOrdenCompra(@RequestBody List<CompraWrapper> list) {
+
+        MatchOperation matchStage = Aggregation.match(new Criteria("foo").is("bar"));
+//        Aggregation aggregation
+//                = Aggregation.newAggregation(matchStage, projectStage);
+
+//        AggregationResults<OutType> output = mongoTemplate.aggregate(aggregation, "foobar", OutType.class);
 
         return new ResponseEntity(HttpStatus.OK);
     }

@@ -45,6 +45,10 @@
             <li class="nav-item ">
                 <a class="nav-link" href="/venta">Venta</a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/generarOrden">Generar Orden</a>
+            </li>
         </ul>
 
     </div>
