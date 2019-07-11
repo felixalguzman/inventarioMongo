@@ -28,27 +28,27 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
-            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
 
     <div class="collapse navbar-collapse" _id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item ">
-                <a class="nav-link" href="/">Inicio <span class="sr-only">(current)</span></a>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/movimiento">Movimiento</a>
             </li>
+
             <li class="nav-item active">
-                <a class="nav-link" href="/articulos">Articulos</a>
-            </li>
-            <li class="nav-item ">
-                <a class="nav-link" href="/venta">Venta</a>
+                <a class="nav-link" href="/movimientos">Movimientos</a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="/generarOrden">Generar Orden</a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/ordenes">Ordenes</a>
+            </li>
+
+
         </ul>
 
     </div>
@@ -56,35 +56,28 @@
 
 <main role="main" class="container">
 
-    <button id="agregar" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal">
-        <#--        <i data-feather="plus-square"></i>-->
-        Agregar
-    </button>
     <div class="starter-template">
 
 
-        <h3>Articulos</h3>
+        <h3>Movimientos</h3>
 
         <table class="table table-hover">
             <thead>
             <tr>
                 <#--                <th scope="col">#</th>-->
-                <th scope="col">Nombre</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">Cantidad</th>
-                <th scope="col">Acción</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Fecha</th>
+<#--                <th scope="col">Cantidad movimiento</th>-->
             </tr>
             </thead>
             <tbody>
-            <#list articulo as articulo>
+            <#list movimientos as moviento>
                 <tr>
-                    <td>${articulo.nombre}</td>
-                    <td>${articulo.descripcion}</td>
-                    <td>${articulo.stock}</td>
-                    <td>
-                        <button class="btn btn-secondary">Editar</button>
-                        <button class="btn btn-danger">Eliminar</button>
-                    </td>
+                    <td>${moviento.tipoMovimiento}</td>
+                    <td>${moviento.fecha}</td>
+<#--                    <td>${moviento.detalleMovimiento.cantidadMovimiento}</td>-->
+<#--                    <td>${articulo.}</td>-->
+
                 </tr>
             </#list>
             </tbody>

@@ -1,14 +1,8 @@
 package com.emergente.mongo.controladores;
 
 import com.emergente.mongo.entidades.*;
-import com.emergente.mongo.servicios.ArticuloServices;
-import com.emergente.mongo.servicios.MovimientoServices;
-import com.emergente.mongo.servicios.SuplidorServices;
-import com.emergente.mongo.servicios.VentaServices;
+import com.emergente.mongo.servicios.*;
 import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.MatchOperation;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -28,12 +21,14 @@ public class RutasController {
     private final SuplidorServices suplidorServices;
     private final MovimientoServices movimientoServices;
     private final VentaServices ventaServices;
+    final OrdenServices ordenServices;
 
-    public RutasController(ArticuloServices articuloServices, SuplidorServices suplidorServices, MovimientoServices movimientoServices, VentaServices ventaServices) {
+    public RutasController(ArticuloServices articuloServices, SuplidorServices suplidorServices, MovimientoServices movimientoServices, VentaServices ventaServices, OrdenServices ordenServices) {
         this.articuloServices = articuloServices;
         this.suplidorServices = suplidorServices;
         this.movimientoServices = movimientoServices;
         this.ventaServices = ventaServices;
+        this.ordenServices = ordenServices;
     }
 
     @GetMapping("/")
@@ -42,10 +37,10 @@ public class RutasController {
         return "index";
     }
 
-    @GetMapping("/articulos")
+    @GetMapping("/movimientos")
     public String articulos(Model model) {
-        model.addAttribute("articulos", articuloServices.getAll());
-        return "articulos";
+        model.addAttribute("movimientos", movimientoServices.getAll());
+        return "movimientos";
     }
 
     @GetMapping("/movimiento")
@@ -85,10 +80,10 @@ public class RutasController {
         return new ResponseEntity<>(suplidorServices.buscarPorId(id), HttpStatus.OK);
     }
 
-    @GetMapping("/venta")
-    public String venta(Model model) {
-        model.addAttribute("articulos", articuloServices.getAll());
-        return "venta";
+    @GetMapping("/ordenes")
+    public String ordenes(Model model) {
+        model.addAttribute("ordenes", ordenServices.getAll());
+        return "ordenes";
     }
 
     @GetMapping("/generarOrden")
@@ -145,8 +140,8 @@ public class RutasController {
         return new ResponseEntity<>(movimiento, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/generarOrdenCompra/{fecha}", method = RequestMethod.POST, consumes = "application/json")
-    public ResponseEntity generarOrdenCompra(@RequestBody List<Articulos> list, @PathVariable(value = "fecha") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) throws ParseException {
+    @RequestMapping(value = "/generarOrdenCompra/{fecha}", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    public ResponseEntity<Orden> generarOrdenCompra(@RequestBody List<Articulos> list, @PathVariable(value = "fecha") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) throws ParseException {
 
         SolicitudOrdenDetalleWrapper wrapper = new SolicitudOrdenDetalleWrapper(list, fecha);
         System.out.println("fecha: " + fecha);
@@ -160,10 +155,10 @@ public class RutasController {
         }
 
 
-        SolicitudOrden orden = new SolicitudOrden(detalles,  wrapper.getFechaEsperada(), LocalDate.now());
-        movimientoServices.buscarDiasEntreFechas(orden);
+        SolicitudOrden orden = new SolicitudOrden(detalles, wrapper.getFechaEsperada(), LocalDate.now());
+        Orden ordenGenerada = movimientoServices.buscarDiasEntreFechas(orden);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(ordenGenerada, HttpStatus.OK);
     }
 
     @PostMapping("/nuevoArticulo")

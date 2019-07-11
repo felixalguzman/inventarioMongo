@@ -35,12 +35,17 @@
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="/movimiento">Compra</a>
+                <a class="nav-link" href="/movimiento">Movimiento</a>
             </li>
-
-
+            <li class="nav-item ">
+                <a class="nav-link" href="/movimientos">Movimientos</a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="/generarOrden">Generar Orden</a>
+            </li>
+
+            <li class="nav-item active">
+                <a class="nav-link" href="/ordenes">Ordenes</a>
             </li>
         </ul>
     </div>
@@ -49,66 +54,30 @@
 <main role="main" class="container">
 
     <div class="starter-template">
-        <h1>Nueva venta</h1>
+        <h1>Ordenes</h1>
 
         <form>
 
-            <div class="form-group">
 
+            <table id="table" class="table table-hover">
+                <thead>
+                <tr>
+                    <#--                <th scope="col">#</th>-->
+                    <th scope="col">Total</th>
+                    <th scope="col">Fecha entrega</th>
+                </tr>
+                </thead>
+                <tbody>
 
-                <div class="row">
-                    <div class="col">
-                        <label for="cliente">Cliente</label>
-                        <input type="text" class="form-control" id="cliente" name="cliente"
-                               placeholder="Nombre cliente">
-                    </div>
-                    <div class="col">
+                <#list ordenes as orden>
+                    <td>${orden.total}</td>
+                    <td>${orden.fechaEntrega}</td>
+                </#list>
 
-                        <label for="articulos">Articulos</label>
-                        <select id="articulos" class="form-control" name="articulo"
-                                onchange="actualizarCantidadDisponible()">
-                            <option>Seleccione...</option>
-
-                            <#list articulos as articulo>
-                                <option value="${articulo._id}">${articulo.nombre} , precio: ${articulo.precio}</option>
-                            </#list>
-                        </select>
-                    </div>
-
-                    <div class="col">
-                        <label for="cantidad">Cantidad</label>
-                        <input type="number" class="form-control" min="1" id="cantidad" name="cantidad">
-                    </div>
-
-                    <div class="col-auto align-self-end">
-                        <button type="button" id="agregar" class="btn btn-success">Agregar</button>
-                        <#--                        <button type="reset" class="btn btn-secondary">Limpiar</button>-->
-                    </div>
-                </div>
-
-                <br>
-                <br>
-                <br>
-
-                <table id="table" class="table table-hover">
-                    <thead>
-                    <tr>
-                        <#--                <th scope="col">#</th>-->
-                        <th scope="col">Articulo</th>
-                        <th scope="col">Descripción</th>
-                        <th scope="col">Precio</th>
-                        <th scope="col">Cantidad</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-            </div>
-
-            <button type="button" id="vender" class="btn btn-info">Vender</button>
-        </form>
+                </tbody>
+            </table>
     </div>
+
 
 </main><!-- /.container -->
 <script>

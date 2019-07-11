@@ -35,19 +35,18 @@
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="/">Inicio</a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="/movimiento">Compra</a>
+                <a class="nav-link" href="/movimiento">Movimiento</a>
             </li>
 
             <li class="nav-item ">
-                <a class="nav-link" href="/venta">Venta</a>
+                <a class="nav-link" href="/movimientos">Movimientos</a>
             </li>
-
             <li class="nav-item active">
                 <a class="nav-link" href="/generarOrden">Generar Orden</a>
+            </li>
+
+            <li class="nav-item ">
+                <a class="nav-link" href="/ordenes">Ordenes</a>
             </li>
         </ul>
     </div>
@@ -73,7 +72,8 @@
                             <option>Seleccione...</option>
 
                             <#list articulos as articulo>
-                                <option value="${articulo._id}">${articulo.nombre} , precio: ${articulo.precio}, stock: ${articulo.stock}</option>
+                                <option value="${articulo._id}">${articulo.nombre} , precio: ${articulo.precio},
+                                    stock: ${articulo.stock}</option>
                             </#list>
                         </select>
                     </div>
@@ -118,8 +118,45 @@
             <button type="button" id="vender" class="btn btn-info">Generar orden</button>
         </form>
     </div>
+    <div class="modal" tabindex="-1" id="modalOrden" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Orden</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Suplidor: <p id="suplidorNombre">Suplidor</p>
+                    Fecha: <p id="fechaSugerida">Fecha</p>
+                    Total:<p id="total">Toal</p>
+
+
+                    <h4>Articulo</h4>
+                    <table id="detalles" class="table table-hover">
+                        <thead>
+                        <tr>
+                            <#--                <th scope="col">#</th>-->
+                            <th scope="col">Articulo</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Cantidad</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
 </main><!-- /.container -->
+
+
 <script>
 
     var articulos = [];
@@ -132,24 +169,65 @@
 
         $('#vender').on('click', function () {
 
-        var fecha = $('#fechaEsperada').val();
+            var fecha = $('#fechaEsperada').val();
 
             // var data = [{articulos: articulos, fechaEsperada: fecha}];
             console.log('a vender', articulos);
             $.ajax({
                 type: 'POST',
                 contentType: "application/json",
-                url: '/generarOrdenCompra/'+fecha,
+                url: '/generarOrdenCompra/' + fecha,
+                async: false,
                 data: JSON.stringify(articulos),
 
                 success: function (response) {
 
+                    var json = response.detalles;
+                    var total = response.total;
+                    var fechaEntrega = response.fechaEntrega;
+                    var suplidor = '';
 
-                    console.log('ok');
+                    console.log('ok', json);
+                    // window.location.replace("http://www.w3schools.com");
+
+                    var data = [];
+                    json.forEach(function (detalle) {
+
+
+                        console.log("", detalle);
+                        data.push({
+                            articulo: detalle.articulo.nombre,
+                            descripcion: detalle.articulo.descripcion,
+                            precio: detalle.articulo.precio,
+                            cantidad: detalle.cantidad
+                        });
+
+                        suplidor = detalle.suplidor.nombre;
+
+
+                    });
+
+                    // console.table(data);
+
+                    loadTable('detalles', ['articulo', 'descripcion', 'precio', 'cantidad'], data);
+                    // $('#suplidorNombre').val();
+
+                    console.log('fecha', fechaEntrega);
+                    // document.getElementById("fechaSugerida").value = fechaEntrega;
+                    $('#fechaSugerida').html(fechaEntrega);
+
+                    console.log('total', total);
+                    // document.getElementById("total").html = total;
+                    $('#total').html(total);
+                    $('#suplidorNombre').html(suplidor);
+
+                    $('#modalOrden').modal('toggle')
 
                 }
             });
         });
+
+        // $('#modal').modal('show');
 
     });
 

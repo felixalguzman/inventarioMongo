@@ -2,6 +2,7 @@ package com.emergente.mongo.servicios;
 
 import com.emergente.mongo.entidades.*;
 import com.emergente.mongo.repositorios.MovimientoRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
@@ -10,8 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
 import java.util.*;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -24,11 +23,15 @@ public class MovimientoServices {
     MongoTemplate mongoTemplate;
     final ArticuloServices articuloServices;
     private final MovimientoRepository movimientoRepository;
+    final SuplidorServices suplidorServices;
+    final OrdenServices ordenServices;
 
-    public MovimientoServices(MongoTemplate mongoTemplate, ArticuloServices articuloServices, MovimientoRepository movimientoRepository) {
+    public MovimientoServices(MongoTemplate mongoTemplate, ArticuloServices articuloServices, MovimientoRepository movimientoRepository, SuplidorServices suplidorServices, OrdenServices ordenServices) {
         this.mongoTemplate = mongoTemplate;
         this.articuloServices = articuloServices;
         this.movimientoRepository = movimientoRepository;
+        this.suplidorServices = suplidorServices;
+        this.ordenServices = ordenServices;
     }
 
     @Transactional
@@ -74,7 +77,7 @@ public class MovimientoServices {
 
     }
 
-    public void buscarDiasEntreFechas(SolicitudOrden orden) {
+    public Orden buscarDiasEntreFechas(SolicitudOrden orden) {
 
         long dias = DAYS.between(LocalDate.now(), orden.getFechaEsperada());
         List<Promedio> promedios = average();
@@ -90,9 +93,11 @@ public class MovimientoServices {
         }
         System.out.println("Inventario necesario");
         inventarioNecesario.forEach((k, v) -> System.out.println("art: " + k + " dias disponibles: " + v));
+        List<String> idArticulos = new ArrayList<>();
+        orden.getDetalles().forEach(d -> idArticulos.add(d.getArticulo().get_id()));
 
         Map<String, Double> excedenteArticulos = new HashMap<>();
-        for (Articulo articulo : articuloServices.getAll()) {
+        for (Articulo articulo : articuloServices.buscarPorIds(idArticulos)) {
 
             double excedente = articulo.getStock() - inventarioNecesario.get(articulo.get_id());
             excedenteArticulos.put(articulo.get_id(), excedente);
@@ -130,22 +135,50 @@ public class MovimientoServices {
         }
         diasFaltantes.forEach(d -> System.out.println("dias faltantes: " + d));
 
-        double minimoDia = diasFaltantes.get(diasFaltantes.indexOf(Collections.min(diasFaltantes)));
+        double minimoDia = 0;
+//        if (diasFaltantes.size() > 1) {
+
+        minimoDia = diasFaltantes.get(diasFaltantes.indexOf(Collections.min(diasFaltantes)));
         orden.setFechaEsperada(orden.getFechaEsperada().plusDays((long) minimoDia));
+//        }
+
 
         System.out.println("fecha esperada nueva: " + orden.getFechaEsperada());
-        List<String> ids = new ArrayList<>();
+        Map<String, Integer> ids = new HashMap<>();
 
-        orden.getDetalles().forEach(d -> ids.add(d.getArticulo().get_id()));
+        orden.getDetalles().forEach(d -> ids.put(d.getArticulo().get_id(), d.getCantidad()));
+
+        List<Suplidor> suplidors = suplidorServices.getAll();
+        List<SuplidorTemporal> temporalList = new ArrayList<>();
+        ids.forEach((k, v) -> {
+
+            Aggregation aggregation = Aggregation.newAggregation(
+                    unwind("suplidorDetalles"),
+                    match(Criteria.where("suplidorDetalles.articulo._id").is(k)),
+//                    project("id", "suplidorDetalles.articulo._id", "suplidorDetalles.tiempoEntrega"),
+                    sort(Sort.Direction.DESC, "suplidorDetalles.tiempoEntrega"),
+                    project().and("id").as("suplidorId").and("suplidorDetalles.articulo._id").as("articuloId"),
+                    limit(1)
+            );
+
+            AggregationResults<SuplidorTemporal> groupResults
+                    = mongoTemplate.aggregate(aggregation, Suplidor.class, SuplidorTemporal.class);
+            List<SuplidorTemporal> result = groupResults.getMappedResults();
+
+            SuplidorTemporal suplidorTemporal = new SuplidorTemporal(result.get(0).getSuplidorId(), result.get(0).getArticuloId(), cantidadRecomendada.get(result.get(0).getArticuloId()).intValue());
+            temporalList.add(suplidorTemporal);
 
 
-        Aggregation aggregation = Aggregation.newAggregation(
-                unwind("suplidorDetalle"),
-                match(Criteria.where("suplidorDetalle.articulo._id").in(ids)),
-                project("_id")
-        );
+        });
+        temporalList.forEach(s -> System.out.println("suplidor: " + s.getSuplidorId() + " art: " + s.getArticuloId() + " cant: " + cantidadRecomendada.get(s.getArticuloId())));
+
+        return ordenServices.crear(temporalList, orden.getFechaEsperada());
 
     }
 
 
+    public List<Movimiento> getAll() {
+
+        return movimientoRepository.findAll();
+    }
 }

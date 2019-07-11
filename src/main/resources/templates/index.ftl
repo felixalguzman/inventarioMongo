@@ -34,17 +34,11 @@
 
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="/">Inicio</a>
-            </li>
 
             <li class="nav-item ">
                 <a class="nav-link" href="/movimiento">Compra</a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="/venta">Venta</a>
-            </li>
             <li class="nav-item">
                 <a class="nav-link" href="/generarOrden">Generar Orden</a>
             </li>

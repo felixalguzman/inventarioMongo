@@ -39,8 +39,16 @@
                 <a class="nav-link" href="/movimiento">Movimiento</a>
             </li>
 
+            <li class="nav-item ">
+                <a class="nav-link" href="/movimientos">Movimientos</a>
+            </li>
+
             <li class="nav-item">
                 <a class="nav-link" href="/generarOrden">Generar Orden</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/ordenes">Ordenes</a>
             </li>
         </ul>
     </div>

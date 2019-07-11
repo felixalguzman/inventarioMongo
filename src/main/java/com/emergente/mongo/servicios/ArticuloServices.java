@@ -71,4 +71,8 @@ public class ArticuloServices {
             }
         }
     }
+
+    public List<Articulo> buscarPorIds(List<String> ids){
+        return articuloRepository.findAllBy_idIn(ids);
+    }
 }

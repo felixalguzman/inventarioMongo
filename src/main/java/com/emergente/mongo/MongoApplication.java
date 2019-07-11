@@ -23,22 +23,22 @@ public class MongoApplication {
         ArticuloServices articuloServices = (ArticuloServices) context.getBean("articuloServices");
 
 
-        Articulo articulo = new Articulo("Cosa 1", "una cosa", 5, 12);
+        Articulo articulo = new Articulo("Cosa 3", "el final", 150, 35);
         Articulo articulo2 = new Articulo("Cosa 2", "dos cosa", 6, 18);
 //        articuloServices.crear(articulo);
 //        articuloServices.crear(articulo2);
 //
 //
 //
-        SuplidorDetalle suplidorDetalle = new SuplidorDetalle(5, 6, articuloServices.buscarPorNombre("Cosa 1"));
-        SuplidorDetalle suplidorDetalle1 = new SuplidorDetalle(7, 4, articuloServices.buscarPorNombre("Cosa 2"));
+        SuplidorDetalle suplidorDetalle = new SuplidorDetalle(5, 6, articuloServices.buscarPorNombre("Cosa 3"));
+//        SuplidorDetalle suplidorDetalle1 = new SuplidorDetalle(7, 4, articuloServices.buscarPorNombre("Cosa 2"));
 //
         Set<SuplidorDetalle> detalles = new HashSet<>();
         detalles.add(suplidorDetalle);
-        detalles.add(suplidorDetalle1);
+//        detalles.add(suplidorDetalle1);
 ////
 ////
-        Suplidor suplidor = new Suplidor("Alonso", detalles);
+        Suplidor suplidor = new Suplidor("Miguel", detalles);
         SuplidorServices suplidorServices = (SuplidorServices) context.getBean("suplidorServices");
 //        suplidorServices.crear(suplidor);
 
