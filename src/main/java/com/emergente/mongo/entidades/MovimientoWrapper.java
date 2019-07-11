@@ -6,14 +6,14 @@ public class MovimientoWrapper {
 
 
     private List<Articulos> articulos;
-    private int tipo;
+    private int tipoMovimiento;
 
     public MovimientoWrapper() {
     }
 
-    public MovimientoWrapper(List<Articulos> articulos, int tipo) {
+    public MovimientoWrapper(List<Articulos> articulos, int tipoMovimiento) {
         this.articulos = articulos;
-        this.tipo = tipo;
+        this.tipoMovimiento = tipoMovimiento;
     }
 
     public List<Articulos> getArticulos() {
@@ -24,12 +24,12 @@ public class MovimientoWrapper {
         this.articulos = articulos;
     }
 
-    public int getTipo() {
-        return tipo;
+    public int getTipoMovimiento() {
+        return tipoMovimiento;
     }
 
-    public void setTipo(int tipo) {
-        this.tipo = tipo;
+    public void setTipoMovimiento(int tipoMovimiento) {
+        this.tipoMovimiento = tipoMovimiento;
     }
 }
 

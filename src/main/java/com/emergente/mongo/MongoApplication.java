@@ -30,16 +30,16 @@ public class MongoApplication {
 //
 //
 //
-//        SuplidorDetalle suplidorDetalle = new SuplidorDetalle(5, 6, articuloServices.buscarPorNombre("Cosa 1"));
-//        SuplidorDetalle suplidorDetalle1 = new SuplidorDetalle(7, 4, articuloServices.buscarPorNombre("Cosa 2"));
+        SuplidorDetalle suplidorDetalle = new SuplidorDetalle(5, 6, articuloServices.buscarPorNombre("Cosa 1"));
+        SuplidorDetalle suplidorDetalle1 = new SuplidorDetalle(7, 4, articuloServices.buscarPorNombre("Cosa 2"));
 //
-//        Set<SuplidorDetalle> detalles = new HashSet<>();
-//        detalles.add(suplidorDetalle);
-//        detalles.add(suplidorDetalle1);
+        Set<SuplidorDetalle> detalles = new HashSet<>();
+        detalles.add(suplidorDetalle);
+        detalles.add(suplidorDetalle1);
 ////
 ////
-//        Suplidor suplidor = new Suplidor("Alonso", detalles);
-//        SuplidorServices suplidorServices = (SuplidorServices) context.getBean("suplidorServices");
+        Suplidor suplidor = new Suplidor("Alonso", detalles);
+        SuplidorServices suplidorServices = (SuplidorServices) context.getBean("suplidorServices");
 //        suplidorServices.crear(suplidor);
 
 //        Suplidor suplidor = suplidorServices.buscarPorNombre("Alonso");
@@ -76,6 +76,8 @@ public class MongoApplication {
 
         MovimientoServices movimientoServices = (MovimientoServices) context.getBean("movimientoServices");
         movimientoServices.buscarAverage();
+
+        movimientoServices.average();
 
         System.out.println("Articulo guardado y supidor");
     }

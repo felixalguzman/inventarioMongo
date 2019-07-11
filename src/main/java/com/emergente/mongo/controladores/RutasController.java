@@ -125,22 +125,37 @@ public class RutasController {
             detalleMovimientos.add(detalleMovimiento);
         }
 
-        Movimiento movimiento = new Movimiento(detalleMovimientos, LocalDate.now(), movimientoWrapper.getTipo() == 0 ? TipoMovimiento.ENTRADA : TipoMovimiento.SALIDA);
-        movimientoServices.crear(movimiento);
+        TipoMovimiento tipoMovimiento;
+        if (movimientoWrapper.getTipoMovimiento() == 0) {
+            System.out.println("entrada");
+            tipoMovimiento = TipoMovimiento.ENTRADA;
+        } else {
+            System.out.println("salida");
+            tipoMovimiento = TipoMovimiento.SALIDA;
+        }
 
+        Movimiento movimiento = new Movimiento(detalleMovimientos, LocalDate.now(), tipoMovimiento);
+        movimientoServices.crear(movimiento);
+        articuloServices.actualizarStock(movimiento);
         movimientoServices.buscarAverage();
 
         return new ResponseEntity<>(movimiento, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/generarOrdenCompra", method = RequestMethod.POST, consumes = "application/json")
-    public ResponseEntity generarOrdenCompra(@RequestBody List<MovimientoWrapper> list) {
+    public ResponseEntity generarOrdenCompra(@RequestBody SolicitudOrdenDetalleWrapper list) {
 
-        MatchOperation matchStage = Aggregation.match(new Criteria("foo").is("bar"));
-//        Aggregation aggregation
-//                = Aggregation.newAggregation(matchStage, projectStage);
+        List<SolicitudOrdenDetalle> detalles = new ArrayList<>();
+        for (Articulos articulos : list.getArticulos()) {
 
-//        AggregationResults<OutType> output = mongoTemplate.aggregate(aggregation, "foobar", OutType.class);
+            Articulo articulo = articuloServices.buscarPorId(articulos.getArticulo());
+            SolicitudOrdenDetalle detalle = new SolicitudOrdenDetalle(articulo, articulos.getCantidad());
+            detalles.add(detalle);
+
+        }
+
+        SolicitudOrden orden = new SolicitudOrden(detalles,  list.getFechaEsperada(), LocalDate.now());
+        movimientoServices.buscarDiasEntreFechas(orden);
 
         return new ResponseEntity(HttpStatus.OK);
     }

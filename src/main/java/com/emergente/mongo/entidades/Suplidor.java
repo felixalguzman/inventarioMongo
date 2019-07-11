@@ -13,7 +13,6 @@ public class Suplidor {
     private ObjectId id;
 
     private String nombre;
-
     private Set<SuplidorDetalle> suplidorDetalles;
 
     public Suplidor() {

@@ -79,13 +79,14 @@
                     </div>
 
                     <div class="col">
-                        <label for="cantidad">Cantidad</label>
+                        <label for="cantidad">Cantidad Stock</label>
                         <input type="number" class="form-control" min="1" id="cantidad" name="cantidad">
                     </div>
 
                     <div class="col">
-                        <label for="fecha">Fecha esperada</label>
-                        <input type="date" class="form-control" id="fecha" name="fecha" placeholder="Fecha esperada entrega">
+                        <label for="fechaEsperada">Fecha esperada</label>
+                        <input type="date" class="form-control" id="fechaEsperada" min="" name="fechaEsperada"
+                               placeholder="Fecha esperada entrega">
                     </div>
 
                     <div class="col-auto align-self-end">
@@ -106,7 +107,6 @@
                         <th scope="col">Descripción</th>
                         <th scope="col">Precio</th>
                         <th scope="col">Cantidad</th>
-                        <th scope="col">Fecha esperada</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -132,19 +132,13 @@
 
         $('#vender').on('click', function () {
 
-            var nombre = $('#cliente').val();
 
-            if (nombre === '' || nombre.length === 0){
-                alert('El nombre no puede estar vacio');
-                return false;
-            }
-
-
+            var data = {articulos: articulos};
             console.log('a vender', articulos);
             $.ajax({
                 type: 'POST',
                 contentType: "application/json",
-                url: '/vender/'+nombre,
+                url: '/generarOrdenCompra',
                 data: JSON.stringify(articulos),
 
                 success: function (response) {
@@ -167,8 +161,7 @@
 
         var articulo = $('#articulos option:selected').val();
         var cantidad = $('#cantidad').val();
-        var fecha = $('#fecha').val();
-
+        // var fechaEsperada = $('#fechaEsperada').val();
 
 
         if (cantidad.length === 0 || cantidad === '') {
@@ -176,8 +169,8 @@
             return false;
         }
 
-        if (fecha.length === 0 || fecha === ''){
-            alert('La fecha no puede estar vacia');
+        if (fechaEsperada.length === 0 || fechaEsperada === '') {
+            alert('La fechaEsperada no puede estar vacia');
             return false;
         }
         var articuloNombre, articuloDescripcion, articuloPrecio;
@@ -196,9 +189,9 @@
             }
         });
 
-        articulos.push({articulo: articulo, cantidad: cantidad, fecha: fecha});
+        articulos.push({articulo: articulo, cantidad: cantidad});
 
-        $('#table').find('tbody').append('<tr><td>' + articuloNombre + ' </td> <td>' + articuloDescripcion + '</td>  <td>' + articuloPrecio + '</td> <td>' + cantidad + '</td><td>' + fecha + '</td></tr>');
+        $('#table').find('tbody').append('<tr><td>' + articuloNombre + ' </td> <td>' + articuloDescripcion + '</td>  <td>' + articuloPrecio + '</td> <td>' + cantidad + '</td></tr>');
 
 
     }
