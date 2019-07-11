@@ -79,13 +79,17 @@ public class MovimientoServices {
         long dias = DAYS.between(LocalDate.now(), orden.getFechaEsperada());
         List<Promedio> promedios = average();
 
-        Map<String, Double> inventarioNecesario = new HashMap<>();
+        System.out.println("fecha hoy: " + LocalDate.now() + " y esperada: " + orden.getFechaEsperada() + " dias: " + dias);
 
-        //
+        Map<String, Double> inventarioNecesario = new HashMap<>();
+        Map<String, Double> promedioPorArticulo = new HashMap<>();
         for (Promedio promedio : promedios) {
             double diasDisponibles = dias * promedio.getPromedio();
             inventarioNecesario.put(promedio.getArticuloId(), diasDisponibles);
+            promedioPorArticulo.put(promedio.getArticuloId(), promedio.getPromedio());
         }
+        System.out.println("Inventario necesario");
+        inventarioNecesario.forEach((k, v) -> System.out.println("art: " + k + " dias disponibles: " + v));
 
         Map<String, Double> excedenteArticulos = new HashMap<>();
         for (Articulo articulo : articuloServices.getAll()) {
@@ -95,35 +99,41 @@ public class MovimientoServices {
         }
 
 
+        System.out.println("Excedente articulo");
+        excedenteArticulos.forEach((k, v) -> System.out.println("art: " + k + " excedente: " + v));
+
+
         Map<String, Double> cantidadRecomendada = new HashMap<>();
         for (SolicitudOrdenDetalle detalle : orden.getDetalles()) {
             double recomendada = detalle.getCantidad() - excedenteArticulos.get(detalle.getArticulo().get_id());
             cantidadRecomendada.put(detalle.getArticulo().get_id(), recomendada);
         }
 
+
+        System.out.println("Cantidad recomendada");
+        cantidadRecomendada.forEach((k, v) -> System.out.println("art: " + k + " cantidad: " + v));
+
+
 //        Map<String, Double> cantidadRecomendada = new HashMap<>();
+        System.out.println("Calcular dias faltantes a cada articulo");
         List<Double> diasFaltantes = new ArrayList<>();
         for (Map.Entry<String, Double> entry : excedenteArticulos.entrySet()) {
 
+            System.out.println("art: " + entry.getKey() + " valor: " + entry.getValue());
             if (entry.getValue() < 0) {
 
-                for (Promedio promedio : promedios) {
-
-                    if (promedio.getArticuloId().equalsIgnoreCase(entry.getKey())) {
-
-                        double diaFaltante = entry.getValue() / promedio.getPromedio();
-                        diasFaltantes.add(diaFaltante);
-
-                    }
-                }
+                double diaFaltante = entry.getValue() / promedioPorArticulo.get(entry.getKey());
+                diasFaltantes.add(diaFaltante);
 
             }
 //            System.out.println(entry.getKey() + "/" + entry.getValue());
         }
+        diasFaltantes.forEach(d -> System.out.println("dias faltantes: " + d));
 
         double minimoDia = diasFaltantes.get(diasFaltantes.indexOf(Collections.min(diasFaltantes)));
-        orden.setFechaEsperada(orden.getFechaEsperada().minus((long) minimoDia, DAYS));
+        orden.setFechaEsperada(orden.getFechaEsperada().plusDays((long) minimoDia));
 
+        System.out.println("fecha esperada nueva: " + orden.getFechaEsperada());
         List<String> ids = new ArrayList<>();
 
         orden.getDetalles().forEach(d -> ids.add(d.getArticulo().get_id()));

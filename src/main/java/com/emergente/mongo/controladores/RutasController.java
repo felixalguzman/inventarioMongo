@@ -9,12 +9,15 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -142,11 +145,13 @@ public class RutasController {
         return new ResponseEntity<>(movimiento, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/generarOrdenCompra", method = RequestMethod.POST, consumes = "application/json")
-    public ResponseEntity generarOrdenCompra(@RequestBody SolicitudOrdenDetalleWrapper list) {
+    @RequestMapping(value = "/generarOrdenCompra/{fecha}", method = RequestMethod.POST, consumes = "application/json")
+    public ResponseEntity generarOrdenCompra(@RequestBody List<Articulos> list, @PathVariable(value = "fecha") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) throws ParseException {
 
+        SolicitudOrdenDetalleWrapper wrapper = new SolicitudOrdenDetalleWrapper(list, fecha);
+        System.out.println("fecha: " + fecha);
         List<SolicitudOrdenDetalle> detalles = new ArrayList<>();
-        for (Articulos articulos : list.getArticulos()) {
+        for (Articulos articulos : wrapper.getArticulos()) {
 
             Articulo articulo = articuloServices.buscarPorId(articulos.getArticulo());
             SolicitudOrdenDetalle detalle = new SolicitudOrdenDetalle(articulo, articulos.getCantidad());
@@ -154,7 +159,8 @@ public class RutasController {
 
         }
 
-        SolicitudOrden orden = new SolicitudOrden(detalles,  list.getFechaEsperada(), LocalDate.now());
+
+        SolicitudOrden orden = new SolicitudOrden(detalles,  wrapper.getFechaEsperada(), LocalDate.now());
         movimientoServices.buscarDiasEntreFechas(orden);
 
         return new ResponseEntity(HttpStatus.OK);

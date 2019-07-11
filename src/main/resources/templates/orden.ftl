@@ -73,7 +73,7 @@
                             <option>Seleccione...</option>
 
                             <#list articulos as articulo>
-                                <option value="${articulo._id}">${articulo.nombre} , precio: ${articulo.precio}</option>
+                                <option value="${articulo._id}">${articulo.nombre} , precio: ${articulo.precio}, stock: ${articulo.stock}</option>
                             </#list>
                         </select>
                     </div>
@@ -132,13 +132,14 @@
 
         $('#vender').on('click', function () {
 
+        var fecha = $('#fechaEsperada').val();
 
-            var data = {articulos: articulos};
+            // var data = [{articulos: articulos, fechaEsperada: fecha}];
             console.log('a vender', articulos);
             $.ajax({
                 type: 'POST',
                 contentType: "application/json",
-                url: '/generarOrdenCompra',
+                url: '/generarOrdenCompra/'+fecha,
                 data: JSON.stringify(articulos),
 
                 success: function (response) {
