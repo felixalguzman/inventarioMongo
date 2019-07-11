@@ -1,26 +1,16 @@
 package com.emergente.mongo.entidades;
 
-public class CompraWrapper {
+public class Articulos{
 
-    private String suplidor;
     private String articulo;
     private int cantidad;
 
-    public CompraWrapper() {
+    public Articulos() {
     }
 
-    public CompraWrapper(String suplidor, String articulo, int cantidad) {
-        this.suplidor = suplidor;
+    public Articulos(String articulo, int cantidad) {
         this.articulo = articulo;
         this.cantidad = cantidad;
-    }
-
-    public String getSuplidor() {
-        return suplidor;
-    }
-
-    public void setSuplidor(String suplidor) {
-        this.suplidor = suplidor;
     }
 
     public String getArticulo() {

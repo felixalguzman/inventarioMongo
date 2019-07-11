@@ -39,7 +39,7 @@
             </li>
 
             <li class="nav-item ">
-                <a class="nav-link" href="/compra">Compra</a>
+                <a class="nav-link" href="/movimiento">Compra</a>
             </li>
 
             <li class="nav-item">

@@ -1,9 +1,8 @@
 package com.emergente.mongo;
 
 import com.emergente.mongo.entidades.*;
-import com.emergente.mongo.repositorios.ArticuloRepository;
 import com.emergente.mongo.servicios.ArticuloServices;
-import com.emergente.mongo.servicios.CompraServices;
+import com.emergente.mongo.servicios.MovimientoServices;
 import com.emergente.mongo.servicios.SuplidorServices;
 import com.emergente.mongo.servicios.VentaServices;
 import org.springframework.boot.SpringApplication;
@@ -31,30 +30,30 @@ public class MongoApplication {
 //
 //
 //
-        SuplidorDetalle suplidorDetalle = new SuplidorDetalle(5, 6, articuloServices.buscarPorNombre("Cosa 1"));
-        SuplidorDetalle suplidorDetalle1 = new SuplidorDetalle(7, 4, articuloServices.buscarPorNombre("Cosa 2"));
+//        SuplidorDetalle suplidorDetalle = new SuplidorDetalle(5, 6, articuloServices.buscarPorNombre("Cosa 1"));
+//        SuplidorDetalle suplidorDetalle1 = new SuplidorDetalle(7, 4, articuloServices.buscarPorNombre("Cosa 2"));
 //
-        Set<SuplidorDetalle> detalles = new HashSet<>();
+//        Set<SuplidorDetalle> detalles = new HashSet<>();
 //        detalles.add(suplidorDetalle);
 //        detalles.add(suplidorDetalle1);
-//
-//
+////
+////
 //        Suplidor suplidor = new Suplidor("Alonso", detalles);
-        SuplidorServices suplidorServices = (SuplidorServices) context.getBean("suplidorServices");
+//        SuplidorServices suplidorServices = (SuplidorServices) context.getBean("suplidorServices");
 //        suplidorServices.crear(suplidor);
 
-        Suplidor suplidor = suplidorServices.buscarPorNombre("Alonso");
-        Set<DetalleCompra> detalleCompras = new HashSet<>();
-        for (SuplidorDetalle detalle : suplidor.getSuplidorDetalles()) {
+//        Suplidor suplidor = suplidorServices.buscarPorNombre("Alonso");
+//        Set<DetalleMovimiento> detalleMovimientos = new HashSet<>();
+//        for (SuplidorDetalle detalle : suplidor.getSuplidorDetalles()) {
+//
+//            DetalleMovimiento detalleMovimiento = new DetalleMovimiento(detalle.getArticulo(), 5);
+//            detalleMovimientos.add(detalleMovimiento);
+//
+////            articuloServices.actualizarStockCompra(detalle.getArticulo(), 5);
+//        }
 
-            DetalleCompra detalleCompra = new DetalleCompra(detalle.getArticulo(), 5, 190);
-            detalleCompras.add(detalleCompra);
 
-//            articuloServices.actualizarStockCompra(detalle.getArticulo(), 5);
-        }
-
-
-//        Compra compra = new Compra(detalleCompras, LocalDate.now(), suplidor);
+//        Movimiento compra = new Movimiento(detalleMovimientos, LocalDate.now(), suplidor);
 //        CompraServices compraServices = (CompraServices)context.getBean("compraServices");
 //        compraServices.crear(compra);
 //
@@ -62,19 +61,21 @@ public class MongoApplication {
 //        DetalleVenta detalleVenta2 = new DetalleVenta(articuloServices.buscarPorNombre("Cosa 2"), 4);
 //
 //
-        Set<DetalleVenta> ventas = new HashSet<>();
+//        Set<DetalleVenta> ventas = new HashSet<>();
 //        ventas.add(detalleVenta);
 //        ventas.add(detalleVenta2);
 
-        for (DetalleVenta venta : ventas) {
-//            articuloServices.actualizarStockVenta(venta.getArticulo(), venta.getCantidad());
+//        for (DetalleVenta venta : ventas) {
+////            articuloServices.actualizarStockVenta(venta.getArticulo(), venta.getCantidad());
+//
+//        }
 
-        }
-
-        Venta venta = new Venta("Felix", ventas, LocalDate.now());
-        VentaServices ventaServices = (VentaServices) context.getBean("ventaServices");
+//        Venta venta = new Venta("Felix", ventas, LocalDate.now());
+//        VentaServices ventaServices = (VentaServices) context.getBean("ventaServices");
 //        ventaServices.crear(venta);
 
+        MovimientoServices movimientoServices = (MovimientoServices) context.getBean("movimientoServices");
+        movimientoServices.buscarAverage();
 
         System.out.println("Articulo guardado y supidor");
     }

@@ -5,22 +5,20 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
-public class DetalleCompra {
+public class DetalleMovimiento {
 
     @Id
     private ObjectId id;
 
     private Articulo articulo;
-    private int cantidadStock;
-    private double subTotal;
+    private int cantidadMovimiento;
 
-    public DetalleCompra() {
+    public DetalleMovimiento() {
     }
 
-    public DetalleCompra(Articulo articulo, int cantidadStock, double subTotal) {
+    public DetalleMovimiento(Articulo articulo, int cantidadMovimiento) {
         this.articulo = articulo;
-        this.cantidadStock = cantidadStock;
-        this.subTotal = subTotal;
+        this.cantidadMovimiento = cantidadMovimiento;
     }
 
     public ObjectId getId() {
@@ -39,19 +37,12 @@ public class DetalleCompra {
         this.articulo = articulo;
     }
 
-    public int getCantidadStock() {
-        return cantidadStock;
+    public int getCantidadMovimiento() {
+        return cantidadMovimiento;
     }
 
-    public void setCantidadStock(int cantidadStock) {
-        this.cantidadStock = cantidadStock;
+    public void setCantidadMovimiento(int cantidadMovimiento) {
+        this.cantidadMovimiento = cantidadMovimiento;
     }
 
-    public double getSubTotal() {
-        return subTotal;
-    }
-
-    public void setSubTotal(double subTotal) {
-        this.subTotal = subTotal;
-    }
 }

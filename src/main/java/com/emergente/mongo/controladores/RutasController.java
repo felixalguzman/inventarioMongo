@@ -2,11 +2,10 @@ package com.emergente.mongo.controladores;
 
 import com.emergente.mongo.entidades.*;
 import com.emergente.mongo.servicios.ArticuloServices;
-import com.emergente.mongo.servicios.CompraServices;
+import com.emergente.mongo.servicios.MovimientoServices;
 import com.emergente.mongo.servicios.SuplidorServices;
 import com.emergente.mongo.servicios.VentaServices;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -24,13 +23,13 @@ public class RutasController {
 
     private final ArticuloServices articuloServices;
     private final SuplidorServices suplidorServices;
-    private final CompraServices compraServices;
+    private final MovimientoServices movimientoServices;
     private final VentaServices ventaServices;
 
-    public RutasController(ArticuloServices articuloServices, SuplidorServices suplidorServices, CompraServices compraServices, VentaServices ventaServices) {
+    public RutasController(ArticuloServices articuloServices, SuplidorServices suplidorServices, MovimientoServices movimientoServices, VentaServices ventaServices) {
         this.articuloServices = articuloServices;
         this.suplidorServices = suplidorServices;
-        this.compraServices = compraServices;
+        this.movimientoServices = movimientoServices;
         this.ventaServices = ventaServices;
     }
 
@@ -46,10 +45,11 @@ public class RutasController {
         return "articulos";
     }
 
-    @GetMapping("/compra")
+    @GetMapping("/movimiento")
     public String compra(Model model) {
-        model.addAttribute("suplidores", suplidorServices.getAll());
-        return "compra";
+        model.addAttribute("articulos", articuloServices.getAll());
+
+        return "movimiento";
     }
 
     @RequestMapping(value = "/articulosSuplidor/{suplidorId}", method = RequestMethod.POST)
@@ -113,27 +113,28 @@ public class RutasController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/comprar", method = RequestMethod.POST, consumes = "application/json")
-    public ResponseEntity comprar(@RequestBody List<CompraWrapper> list) {
+    @RequestMapping(value = "/movimiento", method = RequestMethod.POST, consumes = "application/json")
+    public ResponseEntity comprar(@RequestBody MovimientoWrapper movimientoWrapper) {
 
-        Set<DetalleCompra> detalleCompras = new HashSet<>();
-        for (CompraWrapper wrapper : list) {
-            System.out.println("compras" + wrapper);
-            Articulo articulo = articuloServices.buscarPorId(wrapper.getArticulo());
-            DetalleCompra detalleCompra = new DetalleCompra(articulo, wrapper.getCantidad(), articulo.getPrecio() * wrapper.getCantidad());
-            detalleCompras.add(detalleCompra);
-            articuloServices.actualizarStockCompra(articulo, wrapper.getCantidad());
+        Set<DetalleMovimiento> detalleMovimientos = new HashSet<>();
 
+        for (Articulos articulos : movimientoWrapper.getArticulos()) {
+
+            Articulo articulo = articuloServices.buscarPorId(articulos.getArticulo());
+            DetalleMovimiento detalleMovimiento = new DetalleMovimiento(articulo, articulos.getCantidad());
+            detalleMovimientos.add(detalleMovimiento);
         }
-        ObjectId id = new ObjectId(list.get(0).getSuplidor());
-        Compra compra = new Compra(detalleCompras, LocalDate.now(), suplidorServices.buscarPorId(id));
-        compraServices.crear(compra);
 
-        return new ResponseEntity(HttpStatus.OK);
+        Movimiento movimiento = new Movimiento(detalleMovimientos, LocalDate.now(), movimientoWrapper.getTipo() == 0 ? TipoMovimiento.ENTRADA : TipoMovimiento.SALIDA);
+        movimientoServices.crear(movimiento);
+
+        movimientoServices.buscarAverage();
+
+        return new ResponseEntity<>(movimiento, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/generarOrdenCompra", method = RequestMethod.POST, consumes = "application/json")
-    public ResponseEntity generarOrdenCompra(@RequestBody List<CompraWrapper> list) {
+    public ResponseEntity generarOrdenCompra(@RequestBody List<MovimientoWrapper> list) {
 
         MatchOperation matchStage = Aggregation.match(new Criteria("foo").is("bar"));
 //        Aggregation aggregation

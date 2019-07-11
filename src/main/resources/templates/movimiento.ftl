@@ -34,17 +34,9 @@
 
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/">Inicio</a>
-            </li>
-
 
             <li class="nav-item active">
-                <a class="nav-link" href="/compra">Compra</a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="/venta">Venta</a>
+                <a class="nav-link" href="/movimiento">Movimiento</a>
             </li>
 
             <li class="nav-item">
@@ -57,7 +49,7 @@
 <main role="main" class="container">
 
     <div class="starter-template">
-        <h1>Nueva compra</h1>
+        <h1>Nuevo movimiento</h1>
 
         <form>
 
@@ -67,22 +59,27 @@
                 <div class="row">
 
                     <div class="col">
-                        <label for="suplidor">Suplidor</label>
-                        <select id="suplidor" class="form-control" onchange="actualizarArticulos()" required
-                                name="suplidor">
-                            <option>Seleccione...</option>
-                            <#list suplidores as suplidor>
-                                <option value="${suplidor.id}">${suplidor.nombre}</option>
-                            </#list>
-                        </select>
+                        <label for="option1">Tipo movimiento</label>
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-secondary active">
+                                <input type="radio" name="tipoMovimiento" id="option1" autocomplete="off" checked> Entrada
+                            </label>
+
+                            <label class="btn btn-secondary">
+                                <input type="radio" name="tipoMovimiento" id="option3" autocomplete="off"> Salida
+                            </label>
+                        </div>
                     </div>
 
-                    <div class="col">
 
+                    <div class="col">
                         <label for="articulos">Articulos</label>
-                        <select id="articulos" class="form-control" name="articulo"
-                                onchange="actualizarCantidadDisponible()">
+                        <select id="articulos" class="form-control" name="articulo">
                             <option>Seleccione...</option>
+                            <#list articulos as articulo>
+                                <option value="${articulo._id}">${articulo.nombre} , precio: ${articulo.precio},
+                                    stock: ${articulo.stock}</option>
+                            </#list>
                         </select>
                     </div>
 
@@ -105,7 +102,6 @@
                     <thead>
                     <tr>
                         <#--                <th scope="col">#</th>-->
-                        <th scope="col">Suplidor</th>
                         <th scope="col">Articulo</th>
                         <th scope="col">Descripción</th>
                         <th scope="col">Cantidad</th>
@@ -117,7 +113,7 @@
                 </table>
             </div>
 
-            <button type="button" id="comprar" class="btn btn-info">Comprar</button>
+            <button type="button" id="comprar" class="btn btn-info">Guardar</button>
         </form>
     </div>
 
@@ -134,17 +130,34 @@
 
         $('#comprar').on('click', function () {
 
-            console.log('a comprar', articulos);
+            var radios = document.getElementsByName('tipoMovimiento');
+            var tipoMovimiento;
+            for (var i = 0, length = radios.length; i < length; i++) {
+                console.log('indice', i);
+
+
+                if (radios[i].checked) {
+                    // do whatever you want with the checked radio
+                    console.log(radios[i].value, 'ok  ', i);
+                    tipoMovimiento = i;
+                    // only one radio can be logically checked, don't check the rest
+                    break;
+                }
+            }
+
+
+            var data = {articulos: articulos, tipoMovimiento: tipoMovimiento};
+            console.log('a mover', data);
             $.ajax({
                 type: 'POST',
                 contentType: "application/json",
-                url: '/comprar',
-                data: JSON.stringify(articulos),
+                url: '/movimiento',
+                data: JSON.stringify(data),
 
                 success: function (response) {
 
 
-                    console.log('ok');
+                    console.log('ok', response);
 
                 }
             });
@@ -159,11 +172,9 @@
 
     function agregar() {
 
-        var suplidor = $('#suplidor').val();
         var articulo = $('#articulos option:selected').val();
         var cantidad = $('#cantidad').val();
-
-        console.log('supidor', suplidor, "articulo: ", articulo, "cantidad", cantidad);
+        // var tipoMovimiento = $('input[name="tipoMovimiento"]:checked').val();
 
         if (cantidad.length === 0 || cantidad === '') {
             alert('La cantidad no puede estar vacia');
@@ -173,17 +184,6 @@
 
         }
         var articuloNombre, articuloDescripcion, suplidorNombre;
-        $.ajax({
-            type: 'POST',
-            url: '/suplidor/' + suplidor,
-            async: false,
-            success: function (response) {
-
-                // console.log('suplidor', response);
-                suplidorNombre = response.nombre;
-
-            }
-        });
 
         $.ajax({
             type: 'POST',
@@ -194,13 +194,12 @@
                 articuloNombre = response.nombre;
                 articuloDescripcion = response.descripcion;
 
-
             }
         });
 
-        articulos.push({suplidor: suplidor, articulo: articulo, cantidad: cantidad});
+        articulos.push({articulo: articulo, cantidad: cantidad});
 
-        $('#table').find('tbody').append('<tr><td>' + suplidorNombre + '</td> <td>' + articuloNombre + ' </td> <td>' + articuloDescripcion + '</td> <td>' + cantidad + '</td></tr>');
+        $('#table').find('tbody').append('<tr><td>' + articuloNombre + ' </td> <td>' + articuloDescripcion + '</td> <td>' + cantidad + '</td></tr>');
 
 
     }
