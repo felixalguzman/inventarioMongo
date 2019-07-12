@@ -70,8 +70,11 @@
                 <tbody>
 
                 <#list ordenes as orden>
-                    <td>${orden.total}</td>
-                    <td>${orden.fechaEntrega}</td>
+                    <tr>
+
+                        <td>${orden.total}</td>
+                        <td>${orden.fechaEntrega}</td>
+                    </tr>
                 </#list>
 
                 </tbody>

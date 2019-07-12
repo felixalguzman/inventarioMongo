@@ -166,6 +166,7 @@
 
 
                     console.log('ok', response);
+                    location.reload();
 
                 }
             });
